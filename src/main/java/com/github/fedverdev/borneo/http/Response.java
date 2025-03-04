@@ -23,10 +23,12 @@ public class Response {
         headers.forEach((key, value) -> formResponse.append(String.format("%s: %s\r\n", key, value)));
         formResponse.append(String.format("Content-Length: %d\r\n\r\n", this.body.length()));
         formResponse.append(body);
-        System.out.println(formResponse.toString());
         outputStream.write(formResponse.toString().getBytes());
         outputStream.flush();
     }
+
+    public void setBody(String body) { this.body = body; }
+    public void setStatus(HttpStatus status) { this.status = status; }
 
     public HttpStatus getStatus() { return status; }
     public String getBody() { return body; }
