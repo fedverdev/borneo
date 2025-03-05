@@ -1,0 +1,30 @@
+<configuration>
+    <property name="logback.color" value="true"/>
+    <appender name="warner" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>[%d{dd.MM.YYYY HH:mm:ss}] %cyan([%thread]) %yellow(%-5level) %logger{36} - %yellow(%msg%n)</pattern>
+        </encoder>
+    </appender>
+    <appender name="other" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>[%d{dd.MM.YYYY HH:mm:ss}] %cyan([%thread]) %highlight(%-5level) %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="warner"/>
+        <appender-ref ref="other"/>
+    </root>
+</configuration>
