@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class HttpServer implements Server{
     private final int port;
-    private Map<String, Handler> handlers = new HashMap<>();
+    private Map<String, Map<HttpMethod, Handler>> handlers = new HashMap<>();
 
     public HttpServer(int port) {
         this.port = port;
@@ -21,8 +21,11 @@ public class HttpServer implements Server{
     }
 
     @Override
-    public void addHandler(String path, Handler handler) {
-        handlers.put(path, handler);
+    public void addHandler(String path, HttpMethod httpMethod, Handler handler) {
+        if (handlers.get(path) == null) {
+            handlers.put(path, new HashMap<>());
+        }
+        handlers.get(path).put(httpMethod, handler);
     }
 
     @Override
@@ -35,12 +38,17 @@ public class HttpServer implements Server{
             OutputStream outputStream = socket.getOutputStream();
             Request request = new Request(inputStream);
             Response response = new Response(outputStream, HttpStatus.OK, "", new HashMap<String, String>());
-            Handler handler = handlers.get(request.getPath());
-            if (handler == null) {
+            Map<HttpMethod, Handler> handlersMap = handlers.get(request.getPath());
+            if (handlersMap == null) {
                 response.setStatus(HttpStatus.NOT_FOUND);
                 response.setBody("Not found");
             } else {
-                handler.handle(request, response);
+                if (handlersMap.get(request.getMethod()) == null) {
+                    response.setStatus(HttpStatus.METHOD_NOT_ALLOWED);
+                    response.setBody("Method not allowed");
+                } else {
+                    handlersMap.get(request.getMethod()).handle(request, response);
+                }
             }
             response.send();
 
