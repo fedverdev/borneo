@@ -18,7 +18,11 @@ public class Request {
         String line = reader.readLine();
         if (line == null) { throw new IOException("Empty request"); }
         String[] parts = line.split(" ");
-        method = HttpMethod.fromString(parts[0]);
+        try {
+            method = HttpMethod.fromString(parts[0]);
+        } catch (Exception e) {
+            throw new IOException("Unsupported http method: " + parts[0]);
+        }
         path = parts[1];
         while (!(line = reader.readLine()).isEmpty()) {
             parts = line.split(": ");
